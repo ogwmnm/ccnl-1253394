@@ -7,24 +7,15 @@
   window.App = App = function(google, el) {
     this.google = google;
 
-    this.defaultLat = 35.709984;
-
-    this.defaultLng = 139.810703;
-
-    this.options = {
-      zoom: 15,
-      center: new this.google.maps.LatLng(this.defaultLat, this.defaultLng)
-    };
-
     this.el = el;
+
+    this.geocoder = new this.google.maps.Geocoder();
 
     this.map = null;
 
     this.startMarker = null;
 
     this.centerMarker = null;
-
-    this.geocoder = null;
 
     this.circle = null;
 
@@ -36,18 +27,19 @@
   App.prototype._initMap = function() {
     var that = this;
 
-    this.map = new this.google.maps.Map(this.el, this.options);
+    this.map = new this.google.maps.Map(this.el, {
+      zoom: 15,
+      center: new this.google.maps.LatLng(35.709984, 139.810703)
+    });
     this.map.addListener("center_changed", this._updateCenterMarker.bind(this));
 
-    this.geocoder = new this.google.maps.Geocoder();
-
     this.startMarker = new this.google.maps.Marker({
-      position: { lat: this.defaultLat, lng: this.defaultLng },
+      position: this.map.getCenter(),
       map: this.map
     });
 
     this.centerMarker = new this.google.maps.Marker({
-      position: { lat: this.defaultLat, lng: this.defaultLng },
+      position: this.map.getCenter(),
       map: this.map
     });
 
@@ -59,15 +51,24 @@
       radius: 750,          // 半径（ｍ）
       strokeColor: '#ff0000', // 外周色
       strokeOpacity: 0.5,       // 外周透過度（0: 透明 ⇔ 1:不透明）
-      strokeWeight: 3         // 外周太さ（ピクセル）
+      strokeWeight: 5         // 外周太さ（ピクセル）
     });
 
-    this._updateDistance();
+    setTimeout(function() {
+      that._updateStartMarker(that.map.getCenter());
+      that._updateCenterMarker();
+    }, 10);
   };
 
   App.prototype._updateCenterMarker = function() {
     this.centerMarker.setPosition(this.map.getCenter());
     this._updateDistance();
+  };
+
+  App.prototype._updateStartMarker = function(position) {
+    this.startMarker.setPosition(position);
+    this._updateDistance();
+    this._updateCircle();
   };
 
   App.prototype._updateDistance = function() {
@@ -83,9 +84,7 @@
     var that = this;
 
     if (address == null) {
-      this.startMarker.setPosition(this.map.getCenter());
-      this._updateDistance();
-      this._updateCircle();
+      this._updateStartMarker(this.map.getCenter());
       return;
     }
 
@@ -96,9 +95,7 @@
         // Set the position of the specified address.
 
         that.map.setCenter(results[0].geometry.location);
-        that.startMarker.setPosition(results[0].geometry.location);
-        that._updateDistance();
-        that._updateCircle();
+        that._updateStartMarker(results[0].geometry.location);
 
       } else {
         // Error.
@@ -106,7 +103,6 @@
         onError();
 
       }
-
     });
   };
 
