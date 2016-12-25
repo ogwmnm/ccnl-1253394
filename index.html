@@ -1,13 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title></title>
   <link rel="stylesheet" href="./css/bootstrap.min.css">
 </head>
 <body>
 
-<!-- <script src="./js/jquery-3.1.1.min.js"></script>
+<input type="text" name="address">
+<button type="button" onclick="moveTo();">移動して起点に設定する</button>
+
+<button type="button" onclick="setCenter();">現在の中心を起点に設定する</button>
+
+<div>起点からの距離：<span id="distance"></span>m</div>
+
+<div id="map" style="width:620px; height:400px;"></div>
+
+<script src="./js/jquery-3.1.1.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
- --><script src="./js/main.js"></script>
+<!-- <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyDlVGTxN32kns_3nS54EKzQhdNVw-bqXWA&callback=init&libraries=geometry" async defer></script> -->
+<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBIdQdTMArCgZOK1zBs4laRSwx-oRcOvLg&callback=initMap&libraries=geometry" async defer></script>
+<script src="./js/main.js"></script>
+<script>
+  var app;
+
+  function initMap() {
+    app = new window.App(google, document.getElementById("map"));
+
+    app.onDistanceUpdated = function(distance) {
+      document.getElementById("distance").innerText = distance;
+    };
+  }
+
+  function moveTo() {
+    app.setStartPoint(document.getElementsByName("address")[0].value, function() {
+      alert("見つかりませんでした！");
+    });
+  }
+
+  function setCenter() {
+    app.setStartPoint();
+  }
+
+</script>
 </body>
 </html>
