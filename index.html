@@ -25,7 +25,7 @@
   var app;
 
   function initMap() {
-    app = new window.App(google, document.getElementById("map"));
+    app = new window.App(document.getElementById("map"));
 
     app.onDistanceUpdated = function(distance) {
       document.getElementById("distance").innerText = distance;

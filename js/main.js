@@ -4,24 +4,21 @@
 
   var options, App;
 
-  window.App = App = function(google, el) {
-    this.google = google;
+  window.App = App = function(el) {
 
+    /**
+     * 地図を配置する HTML 要素
+     *
+     * @type {HTMLElement}
+     */
     this.el = el;
 
-    this.geocoder = new this.google.maps.Geocoder();
-
-    // 八方位
-    this.angleList = [
-      15,
-      75,
-      105,
-      165,
-      195,
-      255,
-      285,
-      345
-    ];
+    /**
+     * Geocoder Object.
+     *
+     * @type {google.maps.Geocoder}
+     */
+    this.geocoder = new google.maps.Geocoder();
 
     this.map = null;
 
@@ -31,8 +28,40 @@
 
     this.circle = null;
 
+    this.lineOptions = [
+      { angle: 15,  type: 0 },
+      { angle: 45,  type: 1 },
+      { angle: 75,  type: 0 },
+      { angle: 105, type: 0 },
+      { angle: 135, type: 1 },
+      { angle: 165, type: 0 },
+      { angle: 195, type: 0 },
+      { angle: 225, type: 1 },
+      { angle: 255, type: 0 },
+      { angle: 285, type: 0 },
+      { angle: 315, type: 1 },
+      { angle: 345, type: 0 }
+    ];
+
+    this.lineStyles = [
+      {
+        color: "#ff0000",
+        width: 5
+      },
+      {
+        color: "#0000ff",
+        width: 3
+      }
+    ];
+
     this.lineList = [];
 
+    /**
+     * 起点から中心点までの距離
+     *
+     * @private
+     * @type {Number}
+     */
     this.distance = 0;
 
     this._initMap();
@@ -46,40 +75,40 @@
   App.prototype._initMap = function() {
     var that = this;
 
-    this.map = new this.google.maps.Map(this.el, {
+    this.map = new google.maps.Map(this.el, {
       zoom: 15,
-      center: new this.google.maps.LatLng(35.709984, 139.810703)
+      center: new google.maps.LatLng(35.709984, 139.810703)
     });
     this.map.addListener("center_changed", this._updateCenterMarker.bind(this));
 
-    this.startMarker = new this.google.maps.Marker({
+    this.startMarker = new google.maps.Marker({
       position: this.map.getCenter(),
       map: this.map
     });
 
-    this.centerMarker = new this.google.maps.Marker({
+    this.centerMarker = new google.maps.Marker({
       position: this.map.getCenter(),
       map: this.map
     });
 
     this.circle = new google.maps.Circle({
-      center: this.startMarker.getPosition(),       // 中心点(google.maps.LatLng)
+      center: this.startMarker.getPosition(),
       map: this.map,
-      fillColor: 'transparent',   // 塗りつぶし色
-      fillOpacity: 0.5,       // 塗りつぶし透過度（0: 透明 ⇔ 1:不透明）
-      radius: 750,          // 半径（ｍ）
-      strokeColor: '#ff0000', // 外周色
-      strokeOpacity: 0.5,       // 外周透過度（0: 透明 ⇔ 1:不透明）
-      strokeWeight: 5         // 外周太さ（ピクセル）
+      fillColor: "transparent",
+      fillOpacity: 0.5,
+      radius: 750,
+      strokeColor: '#ff0000',
+      strokeOpacity: 0.5,
+      strokeWeight: 3
     });
 
-    this.angleList.forEach(function(angle) {
+    this.lineOptions.forEach(function(option) {
       that.lineList.push(new google.maps.Polyline({
-        path: that._getLinePath(angle),
+        path: that._getLinePath(option.angle),
         map: that.map,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2
+        strokeColor: that.lineStyles[option.type].color,
+        strokeOpacity: 0.5,
+        strokeWeight: that.lineStyles[option.type].width
       }));
     });
 
@@ -119,7 +148,7 @@
    * @private
    */
   App.prototype._updateDistance = function() {
-    this.distance = this.google.maps.geometry.spherical.computeDistanceBetween(
+    this.distance = google.maps.geometry.spherical.computeDistanceBetween(
       this.centerMarker.getPosition(),
       this.startMarker.getPosition()
     );
@@ -144,7 +173,7 @@
     var that = this;
 
     this.lineList.forEach(function(line, i) {
-      line.setPath(that._getLinePath(that.angleList[i]));
+      line.setPath(that._getLinePath(that.lineOptions[i].angle));
     });
   };
 
