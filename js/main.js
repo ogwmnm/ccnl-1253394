@@ -210,7 +210,7 @@
     this.geocoder.geocode({
       address: address
     }, function(results, status) {
-      if (status == that.google.maps.GeocoderStatus.OK) {
+      if (status == google.maps.GeocoderStatus.OK) {
         // Set the position of the specified address.
 
         that.map.setCenter(results[0].geometry.location);
