@@ -2,22 +2,42 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title></title>
-  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <style>
+    body {
+      font-size: 16px;
+    }
+
+    button,
+    input {
+      font-size: 16px;
+    }
+
+    #nav {
+      text-align: center;
+    }
+
+    #map {
+      margin-top: 1em;
+      width: 100%;
+      height: 600px;
+    }
+  </style>
 </head>
 <body>
 
-<input type="text" name="address">
-<button type="button" onclick="moveTo();">移動して起点に設定する</button>
+<div id="nav">
+  <div>
+    <input type="text" name="address">
+    <button type="button" onclick="moveTo();">移動して起点に設定する</button>
+    <button type="button" onclick="setCenter();">現在の中心を起点に設定する</button>
+  </div>
+  <div>起点からの距離：<span id="distance"></span>m</div>
+</div>
 
-<button type="button" onclick="setCenter();">現在の中心を起点に設定する</button>
+<div id="map"></div>
 
-<div>起点からの距離：<span id="distance"></span>m</div>
-
-<div id="map" style="width:100%; height:600px;"></div>
-
-<script src="./js/jquery-3.1.1.min.js"></script>
-<script src="./js/bootstrap.min.js"></script>
 <!-- <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyDlVGTxN32kns_3nS54EKzQhdNVw-bqXWA&callback=init&libraries=geometry" async defer></script> -->
 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBIdQdTMArCgZOK1zBs4laRSwx-oRcOvLg&callback=initMap&libraries=geometry" async defer></script>
 <script src="./js/main.js"></script>
@@ -28,7 +48,7 @@
     app = new window.App(document.getElementById("map"));
 
     app.onDistanceUpdated = function(distance) {
-      document.getElementById("distance").innerText = distance;
+      document.getElementById("distance").innerText = Math.round(distance);
     };
   }
 
