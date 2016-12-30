@@ -187,7 +187,7 @@
   App.prototype._getLinePath = function(angle) {
     return [
       this.centerMarker.getPosition(),
-      new google.maps.geometry.spherical.computeOffset(this.centerMarker.getPosition(), 2000000, angle)
+      new google.maps.geometry.spherical.computeOffset(this.centerMarker.getPosition(), 100000, angle)
     ];
   };
 
