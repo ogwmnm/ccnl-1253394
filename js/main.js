@@ -226,6 +226,40 @@
   };
 
   /**
+   * 現在地を起点に設定する。
+   *
+   * @public
+   * @param {Function} onError エラー時のイベントハンドラ
+   */
+  App.prototype.setStartPointToCurrentPosition = function(onError) {
+    var that = this;
+
+    if (!navigator.geolocation) {
+      setTimeout(function() {
+        onError();
+      }, 1);
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        // Success
+
+        var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+        that.map.setCenter(latLng);
+        that._updateStartMarker(latLng);
+
+      },
+      function() {
+        // Error
+
+        onError();
+
+      }
+    );
+  };
+
+  /**
    * 起点から中心点までの距離が更新されたときに呼ばれるイベントハンドラ。
    *
    * @param  {Number} distance 距離

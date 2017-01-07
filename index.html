@@ -32,6 +32,7 @@
     <input type="text" name="address">
     <button type="button" onclick="moveTo();">移動して起点に設定する</button>
     <button type="button" onclick="setCenter();">現在の中心を起点に設定する</button>
+    <button type="button" onclick="setCurrentPosition();">現在地を起点に設定する</button>
   </div>
   <div>起点からの距離：<span id="distance"></span>m</div>
 </div>
@@ -54,12 +55,18 @@
 
   function moveTo() {
     app.setStartPoint(document.getElementsByName("address")[0].value, function() {
-      alert("見つかりませんでした！");
+      alert("指定された場所が見つかりませんでした。");
     });
   }
 
   function setCenter() {
     app.setStartPoint();
+  }
+
+  function setCurrentPosition() {
+    app.setStartPointToCurrentPosition(function() {
+      alert("現在地を取得できませんでした。");
+    });
   }
 
 </script>
